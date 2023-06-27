@@ -4,6 +4,7 @@ services:
 
   db:
     image: postgres:alpine
+    container_name: 'BankDEV'
     restart: always
     env_file:
       - .env
@@ -13,3 +14,14 @@ services:
       POSTGRES_DB: ${POSTGRES_DB_NAME}
     ports:
       - '5432:5432'
+
+  app:
+    depends_on:
+      - db
+    image: golang:latest
+    entrypoint: ./Dockerfile
+    container_name: bank_services
+    volumes:
+      - .:/go/src/
+    ports:
+      - "8078:8080"
