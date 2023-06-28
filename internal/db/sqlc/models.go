@@ -9,7 +9,7 @@ import (
 )
 
 type Account struct {
-	ID        int64
+	ID        int32
 	Owner     string
 	Balance   int64
 	Currency  string
@@ -17,16 +17,16 @@ type Account struct {
 }
 
 type Entry struct {
-	ID        int64
-	AccountID int64
+	ID        int32
+	AccountID int32
 	Amount    int64
 	CreatedAt time.Time
 }
 
 type Transfer struct {
-	ID            int64
-	FromAccountID int64
-	ToAccountID   int64
+	ID            int32
+	FromAccountID int32
+	ToAccountID   int32
 	Amount        int64
 	CreatedAt     time.Time
 }

@@ -1,24 +1,24 @@
 CREATE TABLE accounts (
-    id BIGINT PRIMARY KEY,
+    id int auto_increment primary key,
     owner varchar(191) not null,
     balance BIGINT not null,
     currency varchar(191) not null,
-    created_at timestamp not null DEFAULT (now())
+    created_at timestamp not null DEFAULT current_timestamp()
 );
 
 create table entries (
-    id BIGINT primary key,
-    account_id bigint not null,
+    id int auto_increment primary key,
+    account_id int not null,
     amount bigint not null,
-    created_at timestamp not null DEFAULT (now())
+    created_at timestamp not null DEFAULT current_timestamp()
 );
 
 create table transfers (
-    id bigint primary key,
-    from_account_id bigint not null,
-    to_account_id bigint not null,
+    id int auto_increment primary key,
+    from_account_id int not null,
+    to_account_id int not null,
     amount bigint not null,
-    created_at timestamp not null DEFAULT (now())
+    created_at timestamp not null DEFAULT current_timestamp()
 );
 
 
