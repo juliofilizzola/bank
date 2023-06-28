@@ -25,11 +25,56 @@ func (q *Queries) CreateTransfers(ctx context.Context, arg CreateTransfersParams
 }
 
 const listTransfersFrom = `-- name: ListTransfersFrom :many
-SELECT id, from_account_id, to_account_id, amount, created_at FROM transfers WHERE from_account_id = ?
+SELECT id, from_account_id, to_account_id, amount, created_at FROM transfers WHERE from_account_id = ? LIMIT ? OFFSET ?
 `
 
-func (q *Queries) ListTransfersFrom(ctx context.Context, fromAccountID int32) ([]Transfer, error) {
-	rows, err := q.db.QueryContext(ctx, listTransfersFrom, fromAccountID)
+type ListTransfersFromParams struct {
+	FromAccountID int32
+	Limit         int32
+	Offset        int32
+}
+
+func (q *Queries) ListTransfersFrom(ctx context.Context, arg ListTransfersFromParams) ([]Transfer, error) {
+	rows, err := q.db.QueryContext(ctx, listTransfersFrom, arg.FromAccountID, arg.Limit, arg.Offset)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Transfer
+	for rows.Next() {
+		var i Transfer
+		if err := rows.Scan(
+			&i.ID,
+			&i.FromAccountID,
+			&i.ToAccountID,
+			&i.Amount,
+			&i.CreatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listTransfersTo = `-- name: ListTransfersTo :many
+SELECT id, from_account_id, to_account_id, amount, created_at FROM transfers WHERE to_account_id = ? LIMIT ? OFFSET ?
+`
+
+type ListTransfersToParams struct {
+	ToAccountID int32
+	Limit       int32
+	Offset      int32
+}
+
+func (q *Queries) ListTransfersTo(ctx context.Context, arg ListTransfersToParams) ([]Transfer, error) {
+	rows, err := q.db.QueryContext(ctx, listTransfersTo, arg.ToAccountID, arg.Limit, arg.Offset)
 	if err != nil {
 		return nil, err
 	}
