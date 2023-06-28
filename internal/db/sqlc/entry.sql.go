@@ -40,11 +40,17 @@ func (q *Queries) GetEntry(ctx context.Context, id int32) (Entry, error) {
 }
 
 const listEntries = `-- name: ListEntries :many
-SELECT id, account_id, amount, created_at FROM entries WHERE account_id = ?
+SELECT id, account_id, amount, created_at FROM entries WHERE account_id = ? LIMIT ? OFFSET ?
 `
 
-func (q *Queries) ListEntries(ctx context.Context, accountID int32) ([]Entry, error) {
-	rows, err := q.db.QueryContext(ctx, listEntries, accountID)
+type ListEntriesParams struct {
+	AccountID int32
+	Limit     int32
+	Offset    int32
+}
+
+func (q *Queries) ListEntries(ctx context.Context, arg ListEntriesParams) ([]Entry, error) {
+	rows, err := q.db.QueryContext(ctx, listEntries, arg.AccountID, arg.Limit, arg.Offset)
 	if err != nil {
 		return nil, err
 	}
