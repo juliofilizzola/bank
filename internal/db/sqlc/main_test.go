@@ -9,6 +9,7 @@ import (
 )
 
 var testQueries *Queries
+var testDb *sql.DB
 
 const (
 	dbDriver  = "mysql"
