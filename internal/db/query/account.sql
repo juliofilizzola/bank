@@ -1,6 +1,9 @@
 -- name: CreateAccount :exec
 INSERT INTO accounts (balance, owner, currency) VALUES (?, ?, ?);
 
+-- name: SelectLastIntroID :one
+select * FROM accounts WHERE id = last_insert_id();
+
 -- name: GetAccount :one
 SELECT * FROM accounts WHERE id = ? LIMIT 1;
 
