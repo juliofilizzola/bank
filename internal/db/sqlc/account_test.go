@@ -2,20 +2,32 @@ package db
 
 import (
 	"context"
+	"testing"
+
+	"bank/util"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func TestQueries_CreateAccount(t *testing.T) {
 	arg := CreateAccountParams{
-		Owner:    "tom",
-		Balance:  100,
-		Currency: "USD",
+		Owner:    util.RandomOwner(),
+		Balance:  util.RandomMoney(),
+		Currency: util.RandomCurrency(),
 	}
 
 	err := testQueries.CreateAccount(context.Background(), arg)
 	require.NoError(t, err)
+	account, err := testQueries.SelectLastIntroID(context.Background())
+	require.NoError(t, err)
+
+	require.NotEmpty(t, account)
+
+	require.Equal(t, account.Owner, arg.Owner)
+	require.Equal(t, account.Balance, arg.Balance)
+	require.Equal(t, account.Currency, arg.Currency)
+
+	require.NotEmpty(t, account.CreatedAt)
 }
 
 func TestQueries_GetAccount(t *testing.T) {
