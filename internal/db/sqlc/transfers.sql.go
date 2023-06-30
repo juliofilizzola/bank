@@ -101,3 +101,20 @@ func (q *Queries) ListTransfersTo(ctx context.Context, arg ListTransfersToParams
 	}
 	return items, nil
 }
+
+const selectLastIntroIdTransfer = `-- name: SelectLastIntroIdTransfer :one
+select id, from_account_id, to_account_id, amount, created_at FROM transfers WHERE id = last_insert_id()
+`
+
+func (q *Queries) SelectLastIntroIdTransfer(ctx context.Context) (Transfer, error) {
+	row := q.db.QueryRowContext(ctx, selectLastIntroIdTransfer)
+	var i Transfer
+	err := row.Scan(
+		&i.ID,
+		&i.FromAccountID,
+		&i.ToAccountID,
+		&i.Amount,
+		&i.CreatedAt,
+	)
+	return i, err
+}

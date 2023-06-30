@@ -76,3 +76,19 @@ func (q *Queries) ListEntries(ctx context.Context, arg ListEntriesParams) ([]Ent
 	}
 	return items, nil
 }
+
+const selectLastIntroIdEntry = `-- name: SelectLastIntroIdEntry :one
+select id, account_id, amount, created_at FROM entries WHERE id = last_insert_id()
+`
+
+func (q *Queries) SelectLastIntroIdEntry(ctx context.Context) (Entry, error) {
+	row := q.db.QueryRowContext(ctx, selectLastIntroIdEntry)
+	var i Entry
+	err := row.Scan(
+		&i.ID,
+		&i.AccountID,
+		&i.Amount,
+		&i.CreatedAt,
+	)
+	return i, err
+}

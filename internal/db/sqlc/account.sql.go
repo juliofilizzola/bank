@@ -88,6 +88,23 @@ func (q *Queries) ListAccounts(ctx context.Context, arg ListAccountsParams) ([]A
 	return items, nil
 }
 
+const selectLastIntroID = `-- name: SelectLastIntroID :one
+select id, owner, balance, currency, created_at FROM accounts WHERE id = last_insert_id()
+`
+
+func (q *Queries) SelectLastIntroID(ctx context.Context) (Account, error) {
+	row := q.db.QueryRowContext(ctx, selectLastIntroID)
+	var i Account
+	err := row.Scan(
+		&i.ID,
+		&i.Owner,
+		&i.Balance,
+		&i.Currency,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
 const updatedAccounts = `-- name: UpdatedAccounts :exec
 UPDATE accounts SET balance = ? where id = ?
 `
