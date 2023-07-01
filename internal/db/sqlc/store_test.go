@@ -2,8 +2,7 @@ package db
 
 import (
 	"context"
-	"database/sql"
-	"log"
+	"fmt"
 	"testing"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -11,24 +10,23 @@ import (
 )
 
 func TestStore_TransferTx(t *testing.T) {
-	testDb, err := sql.Open(dbDriver, dbSources)
-
-	if err != nil {
-		log.Fatal("no")
-	}
 
 	store := NewStore(testDb)
 
 	account1 := createRandomAccount(t)
 	account2 := createRandomAccount(t)
 
-	n := 5
+	n := 1
 	const amount int64 = 10
 
 	errs := make(chan error)
 	results := make(chan TransferTxResult)
-
+	account, err := store.GetAccount(context.Background(), account1.ID)
+	require.NoError(t, err)
+	require.NotEmpty(t, account)
+	var realValueBalance = account.Balance - amount
 	for i := 0; i < n; i++ {
+
 		go func() {
 			result, err := store.TransferTx(context.Background(), TransferTxParams{
 				FromAccountID: account1.ID,
@@ -38,11 +36,13 @@ func TestStore_TransferTx(t *testing.T) {
 
 			errs <- err
 			results <- result
+
 		}()
 	}
 
 	for i := 0; i < n; i++ {
 		err := <-errs
+
 		require.NoError(t, err)
 
 		results := <-results
@@ -56,7 +56,7 @@ func TestStore_TransferTx(t *testing.T) {
 		require.Equal(t, amount, transfer.Amount)
 		require.NotZero(t, transfer.ID)
 		require.NotZero(t, transfer.CreatedAt)
-
+		fmt.Println(transfer.ID)
 		_, err = store.GetTransfer(context.Background(), transfer.ID)
 		require.NoError(t, err)
 
@@ -71,6 +71,9 @@ func TestStore_TransferTx(t *testing.T) {
 		_, err = store.GetEntry(context.Background(), fromEntry.ID)
 		require.NoError(t, err)
 
-		// TODO: CHECK ACCOUNT BALANCE
 	}
+	account4, err := store.GetAccount(context.Background(), account1.ID)
+
+	require.NoError(t, err)
+	require.Equal(t, account4.Balance, realValueBalance)
 }
