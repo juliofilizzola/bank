@@ -19,10 +19,13 @@ func createRandomAccount(t *testing.T) Account {
 	result, err := testQueries.CreateAccount(context.Background(), arg)
 	require.NoError(t, err)
 	id, err := result.LastInsertId()
+
 	require.NoError(t, err)
+
 	var convertId = int(id)
 	n := int32(convertId)
 	account, err := testQueries.GetAccount(context.Background(), n)
+
 	require.NoError(t, err)
 
 	require.NotEmpty(t, account)
@@ -72,22 +75,4 @@ func TestQueries_DeleteAccount(t *testing.T) {
 	err := testQueries.DeleteAccount(context.Background(), 1)
 
 	require.NoError(t, err)
-}
-
-func TestQueries_UpdatedAccounts(t *testing.T) {
-	arg := CreateAccountParams{
-		Balance: 200,
-	}
-
-	err := testQueries.UpdatedAccounts(context.Background(), UpdatedAccountsParams{
-		ID: 2, Balance: arg.Balance,
-	})
-
-	require.NoError(t, err)
-
-	accounts, err := testQueries.GetAccount(context.Background(), 2)
-
-	require.NoError(t, err)
-
-	require.Equal(t, arg.Balance, accounts.Balance)
 }

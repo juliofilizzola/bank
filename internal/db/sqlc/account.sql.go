@@ -10,6 +10,20 @@ import (
 	"database/sql"
 )
 
+const addBalanceUser = `-- name: AddBalanceUser :exec
+UPDATE accounts SET balance = balance + ? where id = ?
+`
+
+type AddBalanceUserParams struct {
+	Amount int64
+	ID     int32
+}
+
+func (q *Queries) AddBalanceUser(ctx context.Context, arg AddBalanceUserParams) error {
+	_, err := q.db.ExecContext(ctx, addBalanceUser, arg.Amount, arg.ID)
+	return err
+}
+
 const createAccount = `-- name: CreateAccount :execresult
 INSERT INTO accounts (balance, owner, currency) VALUES (?, ?, ?)
 `
@@ -88,6 +102,20 @@ func (q *Queries) ListAccounts(ctx context.Context, arg ListAccountsParams) ([]A
 	return items, nil
 }
 
+const removeBalanceUser = `-- name: RemoveBalanceUser :exec
+UPDATE accounts SET balance = balance - ? where id = ?
+`
+
+type RemoveBalanceUserParams struct {
+	Amount int64
+	ID     int32
+}
+
+func (q *Queries) RemoveBalanceUser(ctx context.Context, arg RemoveBalanceUserParams) error {
+	_, err := q.db.ExecContext(ctx, removeBalanceUser, arg.Amount, arg.ID)
+	return err
+}
+
 const selectLastIntroID = `-- name: SelectLastIntroID :one
 select id, owner, balance, currency, created_at FROM accounts WHERE id = last_insert_id()
 `
@@ -103,18 +131,4 @@ func (q *Queries) SelectLastIntroID(ctx context.Context) (Account, error) {
 		&i.CreatedAt,
 	)
 	return i, err
-}
-
-const updatedAccounts = `-- name: UpdatedAccounts :exec
-UPDATE accounts SET balance = ? where id = ?
-`
-
-type UpdatedAccountsParams struct {
-	Balance int64
-	ID      int32
-}
-
-func (q *Queries) UpdatedAccounts(ctx context.Context, arg UpdatedAccountsParams) error {
-	_, err := q.db.ExecContext(ctx, updatedAccounts, arg.Balance, arg.ID)
-	return err
 }
