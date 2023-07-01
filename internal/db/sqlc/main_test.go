@@ -2,10 +2,11 @@ package db
 
 import (
 	"database/sql"
-	_ "github.com/go-sql-driver/mysql"
 	"log"
 	"os"
 	"testing"
+
+	_ "github.com/go-sql-driver/mysql"
 )
 
 var testQueries *Queries
@@ -17,13 +18,13 @@ const (
 )
 
 func TestMain(m *testing.M) {
-	conn, err := sql.Open(dbDriver, dbSources)
+	testDb, err := sql.Open(dbDriver, dbSources)
 
 	if err != nil {
 		log.Fatal("cannot connect to db:", err)
 	}
 
-	testQueries = New(conn)
+	testQueries = New(testDb)
 
 	os.Exit(m.Run())
 

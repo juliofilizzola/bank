@@ -1,4 +1,4 @@
--- name: CreateEntry :exec
+-- name: CreateEntry :execresult
 INSERT INTO entries (account_id, amount) VALUE (?, ?);
 
 -- name: SelectLastIntroIdEntry :one
@@ -8,4 +8,4 @@ select * FROM entries WHERE id = last_insert_id();
 SELECT * FROM entries WHERE id = ?;
 
 -- name: ListEntries :many
-SELECT * FROM entries WHERE account_id = ? LIMIT ? OFFSET ?;
+SELECT * FROM ENTRIES WHERE account_id = ? LIMIT ? OFFSET ?;

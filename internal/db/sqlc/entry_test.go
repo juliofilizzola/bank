@@ -2,8 +2,9 @@ package db
 
 import (
 	"context"
-	"github.com/stretchr/testify/require"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestQueries_CreateEntry(t *testing.T) {
@@ -12,8 +13,9 @@ func TestQueries_CreateEntry(t *testing.T) {
 		Amount:    320,
 	}
 
-	err := testQueries.CreateEntry(context.Background(), arg)
+	result, err := testQueries.CreateEntry(context.Background(), arg)
 	require.NoError(t, err)
+	require.NotEmpty(t, result)
 }
 
 func TestQueries_GetEntry(t *testing.T) {
