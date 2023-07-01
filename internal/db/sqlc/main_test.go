@@ -2,7 +2,6 @@ package db
 
 import (
 	"database/sql"
-	"fmt"
 	"log"
 	"os"
 	"testing"
@@ -21,7 +20,7 @@ const (
 func TestMain(m *testing.M) {
 	var err error
 	testDb, err = sql.Open(dbDriver, dbSources)
-	fmt.Println("hello")
+
 	if err != nil {
 		log.Fatal("cannot connect to db:", err)
 	}

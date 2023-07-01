@@ -4,13 +4,16 @@ import (
 	"context"
 	"testing"
 
+	"bank/util"
 	"github.com/stretchr/testify/require"
 )
 
 func TestQueries_CreateEntry(t *testing.T) {
+	account := createRandomAccount(t)
+
 	arg := CreateEntryParams{
-		AccountID: 2,
-		Amount:    320,
+		AccountID: account.ID,
+		Amount:    util.RandomMoney(),
 	}
 
 	result, err := testQueries.CreateEntry(context.Background(), arg)
@@ -19,12 +22,21 @@ func TestQueries_CreateEntry(t *testing.T) {
 }
 
 func TestQueries_GetEntry(t *testing.T) {
+	account := createRandomAccount(t)
+
 	arg := CreateEntryParams{
-		AccountID: 2,
-		Amount:    320,
+		AccountID: account.ID,
+		Amount:    util.RandomMoney(),
 	}
 
-	entry, err := testQueries.GetEntry(context.Background(), 1)
+	result, err := testQueries.CreateEntry(context.Background(), arg)
+
+	id, err := result.LastInsertId()
+	require.NoError(t, err)
+
+	var convertId = int(id)
+	n := int32(convertId)
+	entry, err := testQueries.GetEntry(context.Background(), n)
 
 	require.NoError(t, err)
 

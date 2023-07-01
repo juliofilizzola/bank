@@ -69,28 +69,24 @@ func (s Store) TransferTx(ctx context.Context, arg TransferTxParams) (TransferTx
 	err = s.execTx(ctx, func(queries *Queries) error {
 		var err error
 
-		fmt.Println("init transaction")
-
 		res, err := queries.CreateTransfers(ctx, CreateTransfersParams{
 			FromAccountID: arg.FromAccountID,
 			ToAccountID:   arg.ToAccountId,
 			Amount:        arg.Amount,
 		})
-		fmt.Println("create transaction")
 
 		if err != nil {
 			return err
 		}
 
-		// todo: valid balance before transaction
 		id, err := res.LastInsertId()
 		if err != nil {
 			return err
 		}
-		fmt.Println("return last insert id", id)
+
 		var idTransfer = int(id)
 		var idConvert = int32(idTransfer)
-		fmt.Println(id, "id create transfers")
+
 		result.Transfer, err = queries.GetTransfer(ctxB, idConvert)
 
 		if err != nil {
@@ -102,58 +98,43 @@ func (s Store) TransferTx(ctx context.Context, arg TransferTxParams) (TransferTx
 			Amount:    arg.Amount,
 		})
 
-		fmt.Println("create entry", id)
-
 		if err != nil {
 			return err
 		}
 
 		result.FromEntry, err = queries.SelectLastIntroIdEntry(ctxB)
+
 		if err != nil {
 			return err
 		}
-		fmt.Println("return entry", id)
 
 		_, err = queries.CreateEntry(ctxB, CreateEntryParams{
 			AccountID: arg.ToAccountId,
 			Amount:    arg.Amount,
 		})
 
-		fmt.Println("create entry To", id)
-
 		if err != nil {
 			return err
 		}
 
 		result.ToEntry, err = queries.SelectLastIntroIdEntry(ctxB)
-		if err != nil {
-			return err
-		}
-		fmt.Println("return entry to", id)
-
-		// todo: update balance
-		fmt.Println(account.Balance, "balance")
-		var accountBalance int64 = account.Balance - arg.Amount
-		var accountBalance2 int64 = account2.Balance + arg.Amount
-		fmt.Println("account balance", accountBalance)
-		err = queries.UpdatedAccounts(ctxB, UpdatedAccountsParams{
-			Balance: accountBalance,
-			ID:      account.ID,
-		})
-		if err != nil {
-			return err
-		}
-
-		err = queries.UpdatedAccounts(ctxB, UpdatedAccountsParams{
-			Balance: accountBalance2,
-			ID:      account2.ID,
-		})
 
 		if err != nil {
 			return err
 		}
 
-		fmt.Println("end from transaction", id)
+		err = addMoney(ctx, queries, account2.ID, arg.Amount)
+
+		if err != nil {
+			return err
+		}
+
+		err = removeMoney(ctx, queries, account.ID, arg.Amount)
+
+		if err != nil {
+			return err
+		}
+
 		return nil
 	})
 
@@ -161,4 +142,29 @@ func (s Store) TransferTx(ctx context.Context, arg TransferTxParams) (TransferTx
 		return result, err
 	}
 	return result, nil
+}
+
+func addMoney(ctx context.Context, q *Queries, id int32, amount int64) error {
+	err := q.AddBalanceUser(ctx, AddBalanceUserParams{
+		Amount: amount,
+		ID:     id,
+	})
+
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func removeMoney(ctx context.Context, q *Queries, id int32, amount int64) error {
+	err := q.RemoveBalanceUser(ctx, RemoveBalanceUserParams{
+		Amount: amount,
+		ID:     id,
+	})
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

@@ -40,7 +40,7 @@ func (q *Queries) GetEntry(ctx context.Context, id int32) (Entry, error) {
 }
 
 const listEntries = `-- name: ListEntries :many
-SELECT id, account_id, amount, created_at FROM entries WHERE account_id = ? LIMIT ? OFFSET ?
+SELECT id, account_id, amount, created_at FROM ENTRIES WHERE account_id = ? LIMIT ? OFFSET ?
 `
 
 type ListEntriesParams struct {

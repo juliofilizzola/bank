@@ -5,13 +5,16 @@ INSERT INTO accounts (balance, owner, currency) VALUES (?, ?, ?);
 select * FROM accounts WHERE id = last_insert_id();
 
 -- name: GetAccount :one
-SELECT * FROM accounts WHERE id = ? LIMIT 1;
+SELECT * FROM accounts WHERE id = sqlc.arg(id) LIMIT 1;
 
 -- name: ListAccounts :many
 SELECT * FROM accounts ORDER BY id LIMIT ? OFFSET ?;
 
--- name: UpdatedAccounts :exec
-UPDATE accounts SET balance = ? where id = ?;
+-- name: AddBalanceUser :exec
+UPDATE accounts SET balance = balance + sqlc.arg(amount) where id = sqlc.arg(id);
+
+-- name: RemoveBalanceUser :exec
+UPDATE accounts SET balance = balance - sqlc.arg(amount) where id = sqlc.arg(id);
 
 -- name: DeleteAccount :exec
-DELETE FROM accounts WHERE id = ?;
+DELETE FROM accounts WHERE id = sqlc.arg(id);

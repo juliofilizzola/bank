@@ -2,7 +2,6 @@ package db
 
 import (
 	"context"
-	"fmt"
 	"testing"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -21,10 +20,14 @@ func TestStore_TransferTx(t *testing.T) {
 
 	errs := make(chan error)
 	results := make(chan TransferTxResult)
+
 	account, err := store.GetAccount(context.Background(), account1.ID)
+
 	require.NoError(t, err)
 	require.NotEmpty(t, account)
+
 	var realValueBalance = account.Balance - amount
+
 	for i := 0; i < n; i++ {
 
 		go func() {
@@ -51,20 +54,25 @@ func TestStore_TransferTx(t *testing.T) {
 		transfer := results.Transfer
 
 		require.NotEmpty(t, transfer)
+
 		require.Equal(t, account1.ID, transfer.FromAccountID)
 		require.Equal(t, account2.ID, transfer.ToAccountID)
 		require.Equal(t, amount, transfer.Amount)
+
 		require.NotZero(t, transfer.ID)
 		require.NotZero(t, transfer.CreatedAt)
-		fmt.Println(transfer.ID)
+
 		_, err = store.GetTransfer(context.Background(), transfer.ID)
+
 		require.NoError(t, err)
 
 		fromEntry := results.FromEntry
 
 		require.NotEmpty(t, fromEntry)
+
 		require.Equal(t, account1.ID, fromEntry.AccountID)
 		require.Equal(t, amount, fromEntry.Amount)
+
 		require.NotZero(t, fromEntry.ID)
 		require.NotZero(t, fromEntry.CreatedAt)
 
@@ -72,6 +80,7 @@ func TestStore_TransferTx(t *testing.T) {
 		require.NoError(t, err)
 
 	}
+
 	account4, err := store.GetAccount(context.Background(), account1.ID)
 
 	require.NoError(t, err)
