@@ -1,7 +1,7 @@
 version: "2"
 sql:
   - engine: "mysql"
-    schema: "internal/db/migration/000001_init.up.sql"
+    schema: "internal/db/migration"
     queries: "internal/db/query"
     gen:
       go:

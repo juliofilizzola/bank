@@ -7,9 +7,10 @@ package db
 
 import (
 	"context"
+	"database/sql"
 )
 
-const createTransfers = `-- name: CreateTransfers :exec
+const createTransfers = `-- name: CreateTransfers :execresult
 INSERT INTO transfers (from_account_id, to_account_id, amount) VALUE (?, ?, ?)
 `
 
@@ -19,9 +20,25 @@ type CreateTransfersParams struct {
 	Amount        int64
 }
 
-func (q *Queries) CreateTransfers(ctx context.Context, arg CreateTransfersParams) error {
-	_, err := q.db.ExecContext(ctx, createTransfers, arg.FromAccountID, arg.ToAccountID, arg.Amount)
-	return err
+func (q *Queries) CreateTransfers(ctx context.Context, arg CreateTransfersParams) (sql.Result, error) {
+	return q.db.ExecContext(ctx, createTransfers, arg.FromAccountID, arg.ToAccountID, arg.Amount)
+}
+
+const getTransfer = `-- name: GetTransfer :one
+SELECT id, from_account_id, to_account_id, amount, created_at FROM TRANSFERS WHERE id = ?
+`
+
+func (q *Queries) GetTransfer(ctx context.Context, id int32) (Transfer, error) {
+	row := q.db.QueryRowContext(ctx, getTransfer, id)
+	var i Transfer
+	err := row.Scan(
+		&i.ID,
+		&i.FromAccountID,
+		&i.ToAccountID,
+		&i.Amount,
+		&i.CreatedAt,
+	)
+	return i, err
 }
 
 const listTransfersFrom = `-- name: ListTransfersFrom :many

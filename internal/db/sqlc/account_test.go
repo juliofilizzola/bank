@@ -9,16 +9,20 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestQueries_CreateAccount(t *testing.T) {
+func createRandomAccount(t *testing.T) Account {
 	arg := CreateAccountParams{
 		Owner:    util.RandomOwner(),
 		Balance:  util.RandomMoney(),
 		Currency: util.RandomCurrency(),
 	}
 
-	err := testQueries.CreateAccount(context.Background(), arg)
+	result, err := testQueries.CreateAccount(context.Background(), arg)
 	require.NoError(t, err)
-	account, err := testQueries.SelectLastIntroID(context.Background())
+	id, err := result.LastInsertId()
+	require.NoError(t, err)
+	var convertId = int(id)
+	n := int32(convertId)
+	account, err := testQueries.GetAccount(context.Background(), n)
 	require.NoError(t, err)
 
 	require.NotEmpty(t, account)
@@ -28,6 +32,10 @@ func TestQueries_CreateAccount(t *testing.T) {
 	require.Equal(t, account.Currency, arg.Currency)
 
 	require.NotEmpty(t, account.CreatedAt)
+	return account
+}
+func TestQueries_CreateAccount(t *testing.T) {
+	createRandomAccount(t)
 }
 
 func TestQueries_GetAccount(t *testing.T) {
@@ -36,7 +44,13 @@ func TestQueries_GetAccount(t *testing.T) {
 		Balance:  100,
 		Currency: "USD",
 	}
-	account, err := testQueries.GetAccount(context.Background(), 3)
+	result, err := testQueries.CreateAccount(context.Background(), arg)
+	require.NoError(t, err)
+	id, err := result.LastInsertId()
+	require.NoError(t, err)
+	var convertId = int(id)
+	n := int32(convertId)
+	account, err := testQueries.GetAccount(context.Background(), n)
 
 	require.NoError(t, err)
 

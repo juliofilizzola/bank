@@ -7,9 +7,10 @@ package db
 
 import (
 	"context"
+	"database/sql"
 )
 
-const createEntry = `-- name: CreateEntry :exec
+const createEntry = `-- name: CreateEntry :execresult
 INSERT INTO entries (account_id, amount) VALUE (?, ?)
 `
 
@@ -18,9 +19,8 @@ type CreateEntryParams struct {
 	Amount    int64
 }
 
-func (q *Queries) CreateEntry(ctx context.Context, arg CreateEntryParams) error {
-	_, err := q.db.ExecContext(ctx, createEntry, arg.AccountID, arg.Amount)
-	return err
+func (q *Queries) CreateEntry(ctx context.Context, arg CreateEntryParams) (sql.Result, error) {
+	return q.db.ExecContext(ctx, createEntry, arg.AccountID, arg.Amount)
 }
 
 const getEntry = `-- name: GetEntry :one
