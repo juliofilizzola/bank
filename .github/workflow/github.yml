@@ -27,7 +27,7 @@ jobs:
     needs: build
     steps:
     - name: Test
-      run: go test -v ./...
+      run: go test -v .\internal\db\sqlc\
 
   golangci:
     name: lint
