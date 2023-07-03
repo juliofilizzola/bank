@@ -4,8 +4,8 @@ import (
 	"context"
 	"testing"
 
-	"bank/util"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/juliofilizzola/bank/util"
 	"github.com/stretchr/testify/require"
 )
 
