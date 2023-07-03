@@ -23,17 +23,17 @@ jobs:
         ports:
           - 33306:3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
-    env:
-      DB_DATABASE: test_db
-      DB_USER: banker
-      DB_PASSWORD: 123456
+    #    env:
+    #      DB_DATABASE: test_db
+    #      DB_USER: banker
+    #      DB_PASSWORD: 123456
     steps:
       - uses: actions/checkout@v3
 
-      - name: Set up MySQL
-        run: |
-          sudo /etc/init.d/mysql start
-          mysql -e 'CREATE DATABASE ${{ env.DB_DATABASE }};' -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }}
+      #      - name: Set up MySQL
+      #        run: |
+      #          sudo /etc/init.d/mysql start
+      #          mysql -e 'CREATE DATABASE ${{ env.DB_DATABASE }};' -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }}
 
       - name: Set up Go
         uses: actions/setup-go@v3
