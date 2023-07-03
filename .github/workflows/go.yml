@@ -23,15 +23,12 @@ jobs:
       - name: Build
         run: go build -v ./...
 
-      - name: Test
-        run: go test -v ./...
-
-  Qodana:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Build
-        run: go build -v ./...
       - name: 'Qodana Scan'
         uses: JetBrains/qodana-action@main
         env:
           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
+
+      - name: Test
+        run: go test -v ./...
+
+
