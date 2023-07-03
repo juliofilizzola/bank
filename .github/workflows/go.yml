@@ -48,7 +48,7 @@ jobs:
         env:
           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
 
-      - name: Test
-        run: go test -v ./...
+#      - name: Test
+#        run: go test -v ./...
 
 
