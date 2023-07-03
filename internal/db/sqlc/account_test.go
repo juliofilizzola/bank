@@ -67,6 +67,10 @@ func TestQueries_ListAccounts(t *testing.T) {
 	accounts, err := testQueries.ListAccounts(context.Background(), ListAccountsParams{Limit: 5,
 		Offset: 1})
 
+	if err != nil {
+		t.Fatal("Error")
+	}
+
 	require.NoError(t, err)
 	require.NotEmpty(t, accounts)
 }
@@ -75,4 +79,62 @@ func TestQueries_DeleteAccount(t *testing.T) {
 	err := testQueries.DeleteAccount(context.Background(), 1)
 
 	require.NoError(t, err)
+}
+
+func TestQueries_AddBalanceUser(t *testing.T) {
+	account := createRandomAccount(t)
+
+	arg := AddBalanceUserParams{
+		Amount: 100,
+		ID:     account.ID,
+	}
+
+	upAmount := account.Balance + arg.Amount
+
+	err := testQueries.AddBalanceUser(context.Background(), arg)
+
+	require.NoError(t, err)
+
+	res, err := testQueries.GetAccount(context.Background(), account.ID)
+
+	require.NoError(t, err)
+	require.NotEmpty(t, res)
+
+	require.Equal(t, res.Balance, upAmount)
+}
+
+func TestQueries_RemoveBalanceUser(t *testing.T) {
+	account := createRandomAccount(t)
+
+	arg := RemoveBalanceUserParams{
+		Amount: 100,
+		ID:     account.ID,
+	}
+
+	upAmount := account.Balance - arg.Amount
+
+	err := testQueries.RemoveBalanceUser(context.Background(), arg)
+	if err != nil {
+		t.Fatal("Error")
+	}
+	require.NoError(t, err)
+
+	res, err := testQueries.GetAccount(context.Background(), account.ID)
+
+	require.NoError(t, err)
+	require.NotEmpty(t, res)
+
+	require.Equal(t, res.Balance, upAmount)
+}
+
+func TestQueries_SelectLastIntroID(t *testing.T) {
+	account := createRandomAccount(t)
+
+	res, err := testQueries.SelectLastIntroID(context.Background())
+	require.NoError(t, err)
+	require.NotEmpty(t, res)
+
+	require.Equal(t, account.ID, res.ID)
+	require.Equal(t, account.Owner, res.Owner)
+	require.Equal(t, account.Currency, res.Currency)
 }

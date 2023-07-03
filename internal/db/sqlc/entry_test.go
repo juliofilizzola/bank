@@ -48,9 +48,25 @@ func TestQueries_GetEntry(t *testing.T) {
 }
 
 func TestQueries_ListEntries(t *testing.T) {
-	accounts, err := testQueries.ListAccounts(context.Background(), ListAccountsParams{Limit: 5,
-		Offset: 1})
+	account := createRandomAccount(t)
 
+	arg := CreateEntryParams{
+		AccountID: account.ID,
+		Amount:    util.RandomMoney(),
+	}
+	n := 3
+	for i := 0; i < n; i++ {
+		result, err := testQueries.CreateEntry(context.Background(), arg)
+		require.NoError(t, err)
+		require.NotEmpty(t, result)
+	}
+
+	res, err := testQueries.ListEntries(context.Background(), ListEntriesParams{
+		AccountID: account.ID,
+		Limit:     6,
+		Offset:    1,
+	})
 	require.NoError(t, err)
-	require.NotEmpty(t, accounts)
+	require.NotEmpty(t, res)
+
 }

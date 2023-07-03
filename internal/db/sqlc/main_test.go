@@ -14,11 +14,12 @@ var testDb *sql.DB
 
 const (
 	dbDriver  = "mysql"
-	dbSources = "root:123456@tcp/bank-dev?parseTime=true"
+	dbSources = "root:123456@tcp/bank-test?parseTime=true"
 )
 
 func TestMain(m *testing.M) {
 	var err error
+	// todo: add database from test
 	testDb, err = sql.Open(dbDriver, dbSources)
 
 	if err != nil {
