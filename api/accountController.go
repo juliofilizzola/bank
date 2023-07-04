@@ -89,3 +89,28 @@ func (s Server) GetAccount(ctx *gin.Context) {
 		"account": account,
 	})
 }
+
+func (s Server) ListAccounts(ctx *gin.Context) {
+	limitQuery := ctx.Query("limit")
+	limitConvert, err := strconv.Atoi(limitQuery)
+	limit := int32(limitConvert)
+
+	pageQuery := ctx.Query("page")
+	pageConvert, err := strconv.Atoi(pageQuery)
+	page := int32(pageConvert)
+
+	accounts, err := s.store.ListAccounts(context.Background(), db.ListAccountsParams{
+		Limit:  limit,
+		Offset: page,
+	})
+
+	if err != nil {
+		fmt.Println(err)
+		ctx.JSON(http.StatusNotFound, errorResponse(errors.New("account not found")))
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"accounts": accounts,
+	})
+}
