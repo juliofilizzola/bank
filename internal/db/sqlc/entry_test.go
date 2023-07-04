@@ -64,9 +64,10 @@ func TestQueries_ListEntries(t *testing.T) {
 	res, err := testQueries.ListEntries(context.Background(), ListEntriesParams{
 		AccountID: account.ID,
 		Limit:     6,
-		Offset:    1,
+		Offset:    0,
 	})
 	require.NoError(t, err)
 	require.NotEmpty(t, res)
+	require.Len(t, res, n)
 
 }
