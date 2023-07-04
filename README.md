@@ -13,4 +13,4 @@ Foram feitas varias alterações no projeto por questões de plataforma.
 - Test unitarios (cobertura registrada no projeto no arquivo cover.tx)
 - Makefile (auxilia na execução de alguns itens ```test, migrations```)
 
-Para saber mais sobre cada parte do projeto acesse a doc [aqui]("doc")
+Para saber mais sobre cada parte do projeto acesse a doc [aqui]("https://github.com/juliofilizzola/bank/tree/main/doc")
