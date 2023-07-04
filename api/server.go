@@ -16,6 +16,8 @@ func NewServer(store *db.Store) *Server {
 	router.POST("account", server.CreateAccount)
 	router.GET("account", server.ListAccounts)
 	router.GET("account/:id", server.GetAccount)
+
+	router.GET("entries/:id", server.ListEntries)
 	server.router = router
 	return server
 }
