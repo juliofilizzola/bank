@@ -9,3 +9,6 @@ test-file:
 
 view-test:
 	go tool cover --html=cover.txt
+
+test-cover:
+	go test ./... -coverprofile cover.txt
