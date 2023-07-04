@@ -16,6 +16,10 @@ type CreateAccountParamsBody struct {
 	Currency string `json:"currency"`
 }
 
+type AddCashParamsBody struct {
+	Amount int64 `json:"amount"`
+}
+
 func (s Server) CreateAccount(ctx *gin.Context) {
 	var body CreateAccountParamsBody
 	var objBody db.CreateAccountParams
@@ -112,5 +116,52 @@ func (s Server) ListAccounts(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, gin.H{
 		"accounts": accounts,
+	})
+}
+
+func (s Server) AddCash(ctx *gin.Context) {
+	paramId := ctx.Param("id")
+
+	idConvert, err := strconv.Atoi(paramId)
+
+	if err != nil {
+		ctx.Status(http.StatusBadRequest)
+		errorResponse(err)
+		return
+	}
+
+	id := int32(idConvert)
+
+	var body AddCashParamsBody
+
+	err = ctx.Bind(&body)
+
+	if err != nil {
+		fmt.Println(err)
+		ctx.JSON(http.StatusNotFound, errorResponse(errors.New("account not found")))
+		return
+	}
+
+	err = s.store.AddBalanceUser(context.Background(), db.AddBalanceUserParams{
+		Amount: body.Amount,
+		ID:     id,
+	})
+
+	if err != nil {
+		ctx.Status(http.StatusBadRequest)
+		errorResponse(err)
+		return
+	}
+
+	account, err := s.store.GetAccount(context.Background(), id)
+
+	if err != nil {
+		fmt.Println(err)
+		ctx.JSON(http.StatusNotFound, errorResponse(errors.New("account not found")))
+		return
+	}
+
+	ctx.JSON(http.StatusCreated, gin.H{
+		"account": account,
 	})
 }

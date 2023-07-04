@@ -134,7 +134,8 @@ func (s Store) TransferTx(ctx context.Context, arg TransferTxParams) (TransferTx
 		if err != nil {
 			return err
 		}
-
+		result.ToAccount = account2
+		result.FromAccount = account
 		return nil
 	})
 
