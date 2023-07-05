@@ -1,3 +1,3 @@
-# Topicos
+# Tópicos
 
 * Migrations
