@@ -28,7 +28,7 @@ func (s Server) CreateAccount(ctx *gin.Context) {
 
 	if err != nil {
 		ctx.Status(http.StatusBadRequest)
-		errorResponse(err)
+		ctx.JSON(http.StatusNotFound, errorResponse(errors.New("internal server error")))
 		return
 	}
 
@@ -48,7 +48,7 @@ func (s Server) CreateAccount(ctx *gin.Context) {
 
 	if err != nil {
 		ctx.Status(http.StatusBadRequest)
-		errorResponse(err)
+		ctx.JSON(http.StatusNotFound, errorResponse(errors.New("internal server error")))
 		return
 	}
 	var convertId = int(res)
@@ -59,7 +59,7 @@ func (s Server) CreateAccount(ctx *gin.Context) {
 
 	if err != nil {
 		ctx.Status(http.StatusBadRequest)
-		errorResponse(err)
+		ctx.JSON(http.StatusNotFound, errorResponse(errors.New("internal server error")))
 		return
 	}
 
@@ -75,7 +75,7 @@ func (s Server) GetAccount(ctx *gin.Context) {
 
 	if err != nil {
 		ctx.Status(http.StatusBadRequest)
-		errorResponse(err)
+		ctx.JSON(http.StatusNotFound, errorResponse(errors.New("internal server error")))
 		return
 	}
 
@@ -126,7 +126,7 @@ func (s Server) AddCash(ctx *gin.Context) {
 
 	if err != nil {
 		ctx.Status(http.StatusBadRequest)
-		errorResponse(err)
+		ctx.JSON(http.StatusNotFound, errorResponse(errors.New("internal server error")))
 		return
 	}
 
@@ -138,7 +138,7 @@ func (s Server) AddCash(ctx *gin.Context) {
 
 	if err != nil {
 		fmt.Println(err)
-		ctx.JSON(http.StatusNotFound, errorResponse(errors.New("account not found")))
+		ctx.JSON(http.StatusNotFound, errorResponse(errors.New("internal server error")))
 		return
 	}
 
@@ -149,7 +149,7 @@ func (s Server) AddCash(ctx *gin.Context) {
 
 	if err != nil {
 		ctx.Status(http.StatusBadRequest)
-		errorResponse(err)
+		ctx.JSON(http.StatusNotFound, errorResponse(errors.New("err in add cash")))
 		return
 	}
 

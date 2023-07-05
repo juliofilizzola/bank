@@ -32,14 +32,15 @@ func (s Server) CreateTransfer(ctx *gin.Context) {
 		ToAccountId:   body.ToAccountId,
 		Amount:        body.Amount,
 	})
+
 	if err != nil {
 		fmt.Println(err)
 		ctx.JSON(http.StatusNotFound, errorResponse(errors.New("account not found")))
 		return
 	}
-	// fmt.Println(&res)
+
 	ctx.JSON(http.StatusCreated, gin.H{
-		"account": res,
+		"transfer": res,
 	})
 
 }

@@ -11,12 +11,6 @@ import (
 	db "github.com/juliofilizzola/bank/internal/db/sqlc"
 )
 
-// type ParamsListEntriesRequest struct {
-// 	accountId int32
-// 	page      int
-// 	limit     int
-// }
-
 func (s Server) ListEntries(ctx *gin.Context) {
 	var paramId = ctx.Param("id")
 	idConvert, err := strconv.Atoi(paramId)
@@ -42,9 +36,18 @@ func (s Server) ListEntries(ctx *gin.Context) {
 		Limit:     limit,
 		Offset:    page,
 	})
+
 	if err != nil {
 		fmt.Println(err)
-		ctx.JSON(http.StatusNotFound, errorResponse(errors.New("account not found")))
+		ctx.JSON(http.StatusNotFound, errorResponse(errors.New("entries not found")))
+		return
+	}
+
+	i := len(entries)
+
+	if i < 0 {
+		fmt.Println(err)
+		ctx.JSON(http.StatusNotFound, errorResponse(errors.New("entries not found")))
 		return
 	}
 
