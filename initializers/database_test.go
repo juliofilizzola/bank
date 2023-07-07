@@ -9,6 +9,8 @@ import (
 func TestConnectDatabase(t *testing.T) {
 	Env()
 	ConnectDatabase()
-
+	require.NoError(t, Err)
 	require.NotEmpty(t, DB)
 }
+
+// todo test error db

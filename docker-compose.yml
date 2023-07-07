@@ -18,6 +18,19 @@ services:
     volumes:
       - ./database/mysql:/var/lib/mysql
 
+
+  database:
+    image: postgres
+    container_name: db_bank_local
+    restart: always
+    env_file:
+      - .env
+    environment:
+      POSTGRES_PASSWORD: ${PASSWORD}
+      POSTGRES_USER: ${USER}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - "8081:5432"
   app:
     depends_on:
       - db

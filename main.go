@@ -10,13 +10,13 @@ import (
 
 func init() {
 	initializers.Env()
+	initializers.Database()
 	initializers.ConnectDatabase()
 }
 
 func main() {
 	store := db.NewStore(initializers.DB)
 	server := api.NewServer(store)
-
 	err := server.Start(initializers.PORT)
 	if err != nil {
 		log.Fatal("cannot start server: ", err)
