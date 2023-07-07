@@ -13,7 +13,7 @@ func init() {
 }
 
 func main() {
-	err := initializers.DBs.AutoMigrate(&models.Account{}, &models.Transfers{})
+	err := initializers.DBs.AutoMigrate(&models.Account{}, &models.Transfers{}, &models.Entries{})
 	if err != nil {
 		log.Fatal(err)
 	}
