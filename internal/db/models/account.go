@@ -1,6 +1,8 @@
 package models
 
 import (
+	"fmt"
+
 	"gorm.io/gorm"
 )
 
@@ -19,4 +21,9 @@ type Account struct {
 	Balance  int64        `json:"balance" gorm:"omitempty"`
 	Email    string       `json:"email" gorm:"omitempty"`
 	Currency TypeCurrency `json:"currency" gorm:"omitempty"`
+	Entries  []Entries    `json:"entries" gorm:"foreignKey:account_id;references:id"`
+}
+
+func PreparteData() {
+	fmt.Println(usd, brl, eur)
 }
